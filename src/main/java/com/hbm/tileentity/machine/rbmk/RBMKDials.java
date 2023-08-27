@@ -26,10 +26,11 @@ public static final String KEY_SAVE_DIALS = "dialSaveDials";
 	public static final String KEY_REASIM_MOD = "dialReasimOutputMod";
 	public static final String KEY_REASIM_BOILERS = "dialReasimBoilers";
 	public static final String KEY_REASIM_BOILER_SPEED = "dialReasimBoilerSpeed";
+	public static final String KEY_DISABLEMELTDOWNS = "dialDisableMeltdowns";
 	
 	public static void createDials(World world) {
 		GameRules rules = world.getGameRules();
-		
+		//todo: make the new gamerule dialdisable meltdown
 		if(!rules.getBoolean(KEY_SAVE_DIALS)) {
 			rules.setOrCreateGameRule(KEY_PASSIVE_COOLING, "1.0");
 			rules.setOrCreateGameRule(KEY_COLUMN_HEAT_FLOW, "0.2");
@@ -49,6 +50,7 @@ public static final String KEY_SAVE_DIALS = "dialSaveDials";
 			rules.setOrCreateGameRule(KEY_REASIM_MOD, "1.0");
 			rules.setOrCreateGameRule(KEY_REASIM_BOILERS, "false");
 			rules.setOrCreateGameRule(KEY_REASIM_BOILER_SPEED, "0.05");
+			rules.setOrCreateGameRule(KEY_DISABLEMELTDOWNS, "false");
 		}
 	}
 	
@@ -204,6 +206,12 @@ public static final String KEY_SAVE_DIALS = "dialSaveDials";
 	public static double getReaSimBoilerSpeed(World world) {
 		return MathHelper.clamp(shittyWorkaroundParseDouble(world.getGameRules().getString(KEY_REASIM_BOILER_SPEED), 0.05D), 0.0D, 1.0D);
 	}
+
+
+
+	public static boolean getDisableMeltdowns(World world) {
+		return world.getGameRules().getBoolean(KEY_DISABLEMELTDOWNS);
+	}
 	
 	//why make the double representation accessible in a game rule when you can just force me to add a second pointless parsing operation?
 	public static double shittyWorkaroundParseDouble(String s, double def) {
@@ -218,4 +226,6 @@ public static final String KEY_SAVE_DIALS = "dialSaveDials";
 		} catch(Exception ex) { }
 		return def;
 	}
+
+
 }

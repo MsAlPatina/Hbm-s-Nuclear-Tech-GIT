@@ -60,9 +60,13 @@ public abstract class TileEntityRBMKBase extends TileEntity implements INBTPacke
 	public static final byte gravity = 5; //in blocks per s^2
 	
 	public int water;
+	public int coolant;
+	public static final int maxCoolant = 16000*20;
 	public static final int maxWater = 16000*20;
 	public int steam;
 	public static final int maxSteam = 16000*20;
+	public int hotcoolant;
+	public static final int maxhotcoolant = 16000*20;
 	
 
 	public boolean hasLid() {
@@ -120,19 +124,20 @@ public abstract class TileEntityRBMKBase extends TileEntity implements INBTPacke
 		}
 	}
 
-	private void jump(){
-		if(this.heat <= jumpTemp && !falling)
+	private void jump() {
+		if(RBMKDials.getDisableMeltdowns(world) == false){ //todo, see if this fixes the crash due to jump being out of positive bounds
+		if (this.heat <= jumpTemp && !falling)
 			return;
 
-		if(!falling){ // linear rise
-			if(this.heat > jumpTemp){
-				if(this.jumpheight > 0 || world.rand.nextInt((int)(25D*maxHeat()/(this.heat-jumpTemp+200D))) == 0){
-					double change = (this.heat-jumpTemp)*0.0002D;
-					double heightLimit = (this.heat-jumpTemp)*0.002D;
+		if (!falling) { // linear rise
+			if (this.heat > jumpTemp) {
+				if (this.jumpheight > 0 || world.rand.nextInt((int) (25D * maxHeat() / (this.heat - jumpTemp + 200D))) == 0) {
+					double change = (this.heat - jumpTemp) * 0.0002D;
+					double heightLimit = (this.heat - jumpTemp) * 0.002D;
 
 					this.jumpheight = this.jumpheight + change;
-					
-					if(this.jumpheight > heightLimit){
+
+					if (this.jumpheight > heightLimit) {
 						this.jumpheight = heightLimit;
 						this.falling = true;
 					}
@@ -140,22 +145,24 @@ public abstract class TileEntityRBMKBase extends TileEntity implements INBTPacke
 			} else {
 				this.falling = true;
 			}
-		} else{ // gravity fall
-			if(this.jumpheight > 0){
+		} else { // gravity fall
+			if (this.jumpheight > 0) {
 				this.downwardSpeed = this.downwardSpeed + this.gravity * 0.05F;
 				this.jumpheight = this.jumpheight - this.downwardSpeed;
 			} else {
 				this.jumpheight = 0;
 				this.downwardSpeed = 0;
 				this.falling = false;
-				world.playSound(null, pos.getX(),  pos.getY()+rbmkHeight+1,  pos.getZ(), HBMSoundHandler.rbmkLid, SoundCategory.BLOCKS, 2.0F, 1.0F);
+				world.playSound(null, pos.getX(), pos.getY() + rbmkHeight + 1, pos.getZ(), HBMSoundHandler.rbmkLid, SoundCategory.BLOCKS, 2.0F, 1.0F);
 			}
 		}
+	}
 	}
 
 	
 	/**
 	 * The ReaSim boiler dial causes all RBMK parts to behave like boilers
+	 * todo: add coolant
 	 */
 	private void boilWater() {
 		
@@ -267,7 +274,7 @@ public abstract class TileEntityRBMKBase extends TileEntity implements INBTPacke
 		if(!diag) {
 			super.readFromNBT(nbt);
 		}
-
+		//todo: see if this why the rbmk returns always 0.0 on the console
 		this.heat = nbt.getDouble("heat");
 		this.jumpheight = nbt.getDouble("jumpheight");
 		this.water = nbt.getInteger("realSimWater");
@@ -369,7 +376,9 @@ public abstract class TileEntityRBMKBase extends TileEntity implements INBTPacke
 			Minecraft.getMinecraft().renderEngine.bindTexture(Gui.ICONS);
 		}
 	}
-	
+
+	//maybe set it here todo uhhh
+
 	public void onOverheat() {
 		
 		for(int i = 0; i < 4; i++) {
@@ -430,8 +439,9 @@ public abstract class TileEntityRBMKBase extends TileEntity implements INBTPacke
 	public static HashSet<TileEntityRBMKBase> columns = new HashSet<>();
 	
 	//assumes that !world.isRemote
+	//todo: make it take RBMKDials.DisableMeltdowns()
 	public void meltdown() {
-		
+
 		RBMKBase.dropLids = false;
 		
 		columns.clear();

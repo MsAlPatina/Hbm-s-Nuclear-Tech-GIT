@@ -21,9 +21,12 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 public class TileEntityRBMKInlet extends TileEntity implements IFluidHandler, ITickable {
 	
 	public FluidTank water;
+
+	public FluidTank coolant;
 	
 	public TileEntityRBMKInlet() {
 		water = new FluidTank(32000);
+		coolant = new FluidTank(16000);
 	}
 	
 	@Override
