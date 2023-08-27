@@ -31,7 +31,7 @@ public class TileEntityRBMKRod extends TileEntityRBMKSlottedBase implements IRBM
 	public double fluxFast;
 	public double fluxSlow;
 	public boolean hasRod;
-
+	public double meltdownlevel; //internal meltdown level
 	public double fluxOut = 0;
 
 	public float fuelR;
@@ -101,12 +101,12 @@ public class TileEntityRBMKRod extends TileEntityRBMKSlottedBase implements IRBM
 				//for spreading, we want the buffered flux to be 0 because we want to know exactly how much gets reflected back
 				this.fluxFast = 0;
 				this.fluxSlow = 0;
-
-				if(this.heat > this.maxHeat()) {
-					this.meltdown();
-					return;
+				if(RBMKDials.getDisableMeltdowns(world) == false) { //todo: fuck arround and find shit out
+					if (this.heat > this.maxHeat()) {
+						this.meltdown();
+						return;
+					}
 				}
-				
 				if(fluxOut > 0){
 					spreadFlux(this.isModerated() ? NType.SLOW : rType, fluxOut);
 				}
@@ -369,7 +369,7 @@ public class TileEntityRBMKRod extends TileEntityRBMKSlottedBase implements IRBM
 		NBTTagCompound data = new NBTTagCompound();
 		
 		if(inventory.getStackInSlot(0).getItem() instanceof ItemRBMKRod) {
-			
+			//add flux
 			ItemRBMKRod rod = ((ItemRBMKRod)inventory.getStackInSlot(0).getItem());
 			data.setString("rod_name", rod.getUnlocalizedName());
 			data.setDouble("enrichment", ItemRBMKRod.getEnrichment(inventory.getStackInSlot(0)));
@@ -378,8 +378,13 @@ public class TileEntityRBMKRod extends TileEntityRBMKSlottedBase implements IRBM
 			data.setDouble("c_coreHeat", ItemRBMKRod.getCoreHeat(inventory.getStackInSlot(0)));
 			data.setDouble("c_maxHeat", rod.meltingPoint);
 			data.setDouble("meltdown", ItemRBMKRod.getMeltdownPercent(inventory.getStackInSlot(0)));
+
+			meltdownlevel = ItemRBMKRod.getMeltdownPercent(inventory.getStackInSlot(0)); //for now that stays there
+
 		}
 		data.setDouble("flux", this.fluxOut);
+		data.setDouble("fastFlux",this.fluxFast);
+		data.setDouble("slowFlux",this.fluxSlow);
 		return data;
 	}
 

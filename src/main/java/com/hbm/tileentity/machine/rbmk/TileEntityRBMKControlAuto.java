@@ -10,7 +10,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 
 public class TileEntityRBMKControlAuto extends TileEntityRBMKControl implements IControlReceiver {
-	
+	//todo: make it so you can AZ5 or overwrite if shit hits the fucking fan, and then reset the overwrite
+
 	public RBMKFunction function = RBMKFunction.LINEAR;
 	public double levelLower;
 	public double levelUpper;

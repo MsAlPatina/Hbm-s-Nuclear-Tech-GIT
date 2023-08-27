@@ -68,17 +68,22 @@ public class RenderRBMKConsole extends TileEntitySpecialRenderer<TileEntityRBMKC
 			double ky = -(i / 15) * 0.125 + 3.625;
 			double kz = -(i % 15) * 0.125 + 0.125D * 7;
 			
-			drawColumn(buf, kx, ky, kz, (float)(0.75D + (i % 2) * 0.05D), col.data.getDouble("heat") / col.data.getDouble("maxHeat"));
+			drawColumn(buf, kx, ky, kz, (float)(0.75D + (i % 2) * 0.05D), col.data.getDouble("heat") / col.data.getDouble("maxHeat")); //i assume that makes it go from 0-1
 			
 			switch(col.type) {
 			case FUEL:
 			case FUEL_SIM:		drawFuel(buf, kx + 0.01, ky, kz, col.data.getDouble("enrichment")); break;
 			case CONTROL:		drawControl(buf, kx + 0.01, ky, kz, col.data.getDouble("level")); break;
 			case CONTROL_AUTO:	drawControlAuto(buf, kx + 0.01, ky, kz, col.data.getDouble("level")); break;
+			//aded
+			case BOILER: drawWaterLevel(buf, kx + 0.01, ky, kz, col.data.getDouble("water"), col.data.getDouble("steam")); break;
+			case HEATEX: drawCoolantLevel(buf, kx + 0.01, ky, kz, col.data.getDouble("coolant"), col.data.getDouble("hotcoolant")); break;
+			case COOLER: drawCoolingIndicator(buf, kx + 0.01, ky, kz, col.data.getDouble("cooled")); break;
+			case ADJCOOLER: drawCoolingIndicator(buf, kx + 0.01, ky, kz, col.data.getDouble("cooled")); break;
 			default:
 			}
 		}
-		
+
 		tess.draw();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 
@@ -128,14 +133,30 @@ public class RenderRBMKConsole extends TileEntitySpecialRenderer<TileEntityRBMKC
 	}
 
 	private void drawColumn(BufferBuilder buf, double x, double y, double z, float color, double heat) {
-		
-		double width = 0.0625D * 0.75;
-		float r = (float) (color + ((1 - color) * Math.max(0, heat-0.4)));
+
+		double width = 0.0625D * 0.75; //--the heat must be possibly 0-1, dangit
+		float r = (float) (color + ((1 - color) * Math.max(0, heat-0.4))); //thats what makes them go red, would make them go to yellow above a set heat limit
+		                                                                   //to mimic the rbmk control panel
 		float d = (float) (color - (color * Math.max(0, heat-0.6)));
-		buf.pos(x, y + width, z - width).color(r, d, d, 1F).endVertex();
-		buf.pos(x, y + width, z + width).color(r, d, d, 1F).endVertex();
-		buf.pos(x, y - width, z + width).color(r, d, d, 1F).endVertex();
-		buf.pos(x, y - width, z - width).color(r, d, d, 1F).endVertex();
+
+
+
+		if (heat > 0.66){ //go off at 1000C
+
+
+			buf.pos(x, y + width, z - width).color(1F,1F,1F , 1F).endVertex();
+			buf.pos(x, y + width, z + width).color(1F, 1F, 1F, 1F).endVertex();
+			buf.pos(x, y - width, z + width).color(1F,1F ,1F , 1F).endVertex();
+			buf.pos(x, y - width, z - width).color(1F, 1F, 1F, 1F).endVertex();
+		}else{
+
+
+			buf.pos(x, y + width, z - width).color(r, d, d, 1F).endVertex();
+			buf.pos(x, y + width, z + width).color(r, d, d, 1F).endVertex();
+			buf.pos(x, y - width, z + width).color(r, d, d, 1F).endVertex();
+			buf.pos(x, y - width, z - width).color(r, d, d, 1F).endVertex();
+
+		}
 	}
 	
 	private void drawFuel(BufferBuilder buf, double x, double y, double z, double enrichment) {
@@ -149,12 +170,32 @@ public class RenderRBMKConsole extends TileEntitySpecialRenderer<TileEntityRBMKC
 	private void drawControlAuto(BufferBuilder buf, double x, double y, double z, double level) {
 		this.drawDot(buf, x, y, z, (float) level, 0F, (float) level);
 	}
-	
+
+
+	//TODO: add water indicator
+	//so it starts a dark blue, then becomes blue when with water, the more steam, the whiter it turns colors go from 0-1
+	private void drawWaterLevel(BufferBuilder buf,double x,double y,double z,double water,double steam){
+		this.drawDot(buf,x,y,z,0F + (float) (steam /20000000D), 0F  , 0.25F + (float) (water /200000D));
+	}
+	//same thing as water, but its for the heater
+	private void drawCoolantLevel(BufferBuilder buf,double x,double y,double z,double coolant,double hotcoolant){
+		this.drawDot(buf,x,y,z,0F + (float) (hotcoolant *0.0001F) , 0F , 0.25F + (float) (coolant *0.0001F) - 0.85F);
+	}
+	//goes yellow if its cooling
+	private void drawCoolingIndicator(BufferBuilder buf, double x, double y, double z, double lastCooled) {
+		if (lastCooled > 0){
+			this.drawDot(buf, x, y, z, 0.4F, 1F, 1F);
+		}else{
+			this.drawDot(buf, x, y, z, 0F, 0F, 0F);
+		}
+	}
+	//bro try add a drawGauge for the control rods and such
+	//or like a bar indicator like in the GUI
 	private void drawDot(BufferBuilder buf, double x, double y, double z, float r, float g, float b) {
 		
 		double width = 0.03125D;
 		double edge = 0.022097D;
-		
+
 		buf.pos(x, y + width, z).color(r, g, b, 1F).endVertex();
 		buf.pos(x, y + edge, z + edge).color(r, g, b, 1F).endVertex();
 		buf.pos(x, y, z + width).color(r, g, b, 1F).endVertex();
@@ -164,7 +205,7 @@ public class RenderRBMKConsole extends TileEntitySpecialRenderer<TileEntityRBMKC
 		buf.pos(x, y + width, z).color(r, g, b, 1F).endVertex();
 		buf.pos(x, y - edge, z - edge).color(r, g, b, 1F).endVertex();
 		buf.pos(x, y, z - width).color(r, g, b, 1F).endVertex();
-		
+
 		buf.pos(x, y + width, z).color(r, g, b, 1F).endVertex();
 		buf.pos(x, y - edge, z + edge).color(r, g, b, 1F).endVertex();
 		buf.pos(x, y - width, z).color(r, g, b, 1F).endVertex();

@@ -133,6 +133,7 @@ import com.hbm.blocks.machine.pile.BlockGraphite;
 import com.hbm.blocks.machine.pile.BlockGraphiteFuel;
 import com.hbm.blocks.machine.pile.BlockGraphiteRod;
 import com.hbm.blocks.machine.pile.BlockGraphiteSource;
+import com.hbm.blocks.machine.rbmk.RBMKAdjCooler; //TODO: thats me
 import com.hbm.blocks.machine.rbmk.RBMKAbsorber;
 import com.hbm.blocks.machine.rbmk.RBMKBlank;
 import com.hbm.blocks.machine.rbmk.RBMKBoiler;
@@ -201,7 +202,6 @@ import com.hbm.lib.HBMSoundHandler;
 import com.hbm.lib.RefStrings;
 import com.hbm.main.MainRegistry;
 import com.hbm.tileentity.DoorDecl;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -1089,6 +1089,10 @@ public class ModBlocks {
 	public static final Block rbmk_loader = new BlockBaseVisualFluidConnectable(Material.IRON, "rbmk_loader").setHardness(15.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab).setHardness(50.0F).setResistance(60.0F);
 	public static final Block rbmk_steam_inlet = new RBMKInlet(Material.IRON, "rbmk_steam_inlet").setCreativeTab(MainRegistry.machineTab).setHardness(50.0F).setResistance(60.0F);
 	public static final Block rbmk_steam_outlet = new RBMKOutlet(Material.IRON, "rbmk_steam_outlet").setCreativeTab(MainRegistry.machineTab).setHardness(50.0F).setResistance(60.0F);
+	//TODO: add my stuff here
+	public static final Block rbmk_adjcooler = new RBMKAdjCooler("rbmk_adjcooler","rbmk_adjcooler").setHardness(15.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
+	public static final Block industrialCondenser = new IndustrialCondenser(Material.IRON,"industrialcondenser").setHardness(15.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
+	//done
 	public static final Block pribris = new RBMKDebris("pribris").addRadiation(10F).toBlock().setCreativeTab(MainRegistry.machineTab).setHardness(50.0F).setResistance(600.0F);
 	public static final Block pribris_burning = new RBMKDebrisBurning("pribris_burning").addRadiation(200F).addFire(5).toBlock().setCreativeTab(MainRegistry.machineTab).setHardness(50.0F).setResistance(1200.0F);
 	public static final Block pribris_radiating = new RBMKDebrisRadiating("pribris_radiating").addRadiation(5000F).addFire(30).toBlock().setCreativeTab(MainRegistry.machineTab).setHardness(50.0F).setResistance(2000.0F);

@@ -118,6 +118,7 @@ public class TileEntityCondenser extends TileEntity implements ITickable, IFluid
 	public int fill(FluidStack resource, boolean doFill){
 		if(resource != null && resource.getFluid() == ModForgeFluids.spentsteam){
 			return tanks[0].fill(resource, doFill);
+
 		}
 		return 0;
 	}

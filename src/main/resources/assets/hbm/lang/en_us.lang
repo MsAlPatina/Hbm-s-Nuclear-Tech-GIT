@@ -943,6 +943,9 @@ rbmk.control.purple=§5Purple Group
 rbmk.moderated=Moderated
 rbmk.rod.name=Rod Type:
 rbmk.rod.flux=Total emitted flux: %s
+rbmk.rod.slowFlux=Total received slow flux: %s
+rbmk.rod.fastFlux=Total received fast flux: %s
+#todo: fix this
 rbmk.rod.depletion=Depletion: %s
 rbmk.rod.xenon=Xenon poison: %s
 rbmk.rod.coreTemp=Core temperature: %s
@@ -1794,6 +1797,10 @@ tile.rbmk_steam_inlet.name=RBMK ReaSim Water Inlet
 tile.rbmk_steam_outlet.name=RBMK ReaSim Steam Outlet
 tile.rbmk_cooler.name=RBMK Emergency Freezer
 tile.rbmk_cooler.desc=§eIf column temperature gets above 750°C it starts to rapidly cool the RBMK channel using cryogel.$§eIt is used to buy you time before meltdown so you get a chance to press AZ-5.
+
+tile.rbmk_adjcooler.name=RBMK Low Temperature Emergency Freezer
+tile.rbmk_adjcooler.desc=§eIf the column temperature gets over 500°C, it will quickly cool the RBMK, usefull to stop overheating in smaller reactors or heat  runaway.
+
 tile.rbmk_heater.name=RBMK Fluid Heater
 tile.rbmk_heater.desc=§eIt is used to boil liquids.$§eIf the heat is higher then the temperature of the boiled liquid then it uses heat to convert it.$§eA Heat Exchanging Heater is used to transfer the heat and get the cool liquid back.
 
